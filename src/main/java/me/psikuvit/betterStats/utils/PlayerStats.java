@@ -1,5 +1,6 @@
 package me.psikuvit.betterStats.utils;
 
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -102,5 +103,9 @@ public class PlayerStats {
     public static double getManaDamage(Player player) {
         double currentMana = getValue(player, Stat.INTELLECT);
         return 1 + (currentMana / 50);
+    }
+
+    public static void applyMagicDamage(Player caster, Entity castedOn, double manaCost) {
+
     }
 }

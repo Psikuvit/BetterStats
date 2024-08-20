@@ -17,29 +17,29 @@ public class Utils {
         randomX -= 0.5D;
         randomY += 0.25D;
         randomZ -= 0.5D;
-        ArmorStand armorStand = loc.getWorld().spawn(loc.clone().add(randomX, randomY, randomZ), ArmorStand.class);
-        armorStand.setCustomName(color((int) damage));
-        armorStand.setCustomNameVisible(true);
-        armorStand.setInvulnerable(true);
-        armorStand.setInvisible(true);
-        armorStand.setBasePlate(false);
-        armorStand.setGravity(false);
+        ArmorStand armorStand = loc.getWorld().spawn(loc.clone().add(randomX, randomY, randomZ), ArmorStand.class, as -> {
+        as.setCustomName(color(damage));
+        as.setCustomNameVisible(true);
+        as.setInvulnerable(true);
+        as.setInvisible(true);
+        as.setBasePlate(false);
+        as.setGravity(false);
+    });
 
         Bukkit.getScheduler().runTaskLater(BetterStats.getPlugin(BetterStats.class), armorStand::remove, 20);
     }
 
-    public static String color(int text) {
+    public static String color(double damage) {
         List<ChatColor> CRIT_SPECTRUM = List.of(ChatColor.WHITE, ChatColor.WHITE, ChatColor.YELLOW, ChatColor.GOLD, ChatColor.RED, ChatColor.RED);
-        String s = "<" + text + ">";
+        String s = "<" + damage + ">";
 
         StringBuilder builder = new StringBuilder();
-        int i = 0;
-        for (String c : s.split("")) {
-            if (i > CRIT_SPECTRUM.size() - 1)
-                i = 0;
-            builder.append(CRIT_SPECTRUM.get(i)).append(c);
-            i++;
+        int spectrumSize = CRIT_SPECTRUM.size();
+
+        for (int i = 0; i < s.length(); i++) {
+            builder.append(CRIT_SPECTRUM.get(i % spectrumSize)).append(s.charAt(i));
         }
+
         return builder.toString();
     }
 }
