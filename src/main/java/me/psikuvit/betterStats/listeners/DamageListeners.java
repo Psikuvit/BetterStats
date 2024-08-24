@@ -1,7 +1,7 @@
 package me.psikuvit.betterStats.listeners;
 
-import me.psikuvit.betterStats.Utils;
-import me.psikuvit.betterStats.utils.PlayerStats;
+import me.psikuvit.betterStats.stats.ItemStats;
+import me.psikuvit.betterStats.stats.PlayerStats;
 import me.psikuvit.betterStats.utils.Stat;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,18 +15,20 @@ public class DamageListeners implements Listener {
     @EventHandler
     public void onDamage(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player player) {
+            PlayerStats playerStats = new PlayerStats(player);
 
-            double strength = PlayerStats.getValue(player, Stat.STRENGTH);
-            double baseDamage = event.getDamage() + strength * 0.5; // strength formula
+            double playerStrength = playerStats.getValue(Stat.STRENGTH) + playerStats.getArmorStats(Stat.STRENGTH);
+            double itemStrength = playerStats.getHeldStats(Stat.STRENGTH);
+
+            double baseDamage = itemStrength + playerStrength * 0.5; // strength formula
 
             if (isCriticalHit(player)) { // check if the hit is critical
-                double critMultiplier = 1.5;
-                baseDamage *= critMultiplier; // add 150% more damage to the original amount
+                double critMultiplier = 1.5 + (playerStats.getHeldStats(Stat.CRITICAL) + playerStats.getArmorStats(Stat.CRITICAL) * 0.2) / 100;
+                baseDamage *= critMultiplier;
                 player.sendMessage("Critical Hit! Damage increased to " + baseDamage);
             }
 
             event.setDamage(baseDamage); // applies the damage
-            Utils.setDamageIndicator(event.getEntity().getLocation(), baseDamage);
         }
     }
 

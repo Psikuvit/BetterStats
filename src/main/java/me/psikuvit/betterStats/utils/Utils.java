@@ -1,14 +1,19 @@
-package me.psikuvit.betterStats;
+package me.psikuvit.betterStats.utils;
 
+import me.psikuvit.betterStats.BetterStats;
+import me.psikuvit.betterStats.stats.ItemStats;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 
 public class Utils {
+
+    private Utils() {}
 
     public static void setDamageIndicator(Location loc, double damage) {
         double randomX = Math.random();
@@ -18,7 +23,7 @@ public class Utils {
         randomY += 0.25D;
         randomZ -= 0.5D;
         ArmorStand armorStand = loc.getWorld().spawn(loc.clone().add(randomX, randomY, randomZ), ArmorStand.class, as -> {
-        as.setCustomName(color(damage));
+        as.setCustomName(color((int) damage));
         as.setCustomNameVisible(true);
         as.setInvulnerable(true);
         as.setInvisible(true);
@@ -29,7 +34,7 @@ public class Utils {
         Bukkit.getScheduler().runTaskLater(BetterStats.getPlugin(BetterStats.class), armorStand::remove, 20);
     }
 
-    public static String color(double damage) {
+    private static String color(int damage) {
         List<ChatColor> CRIT_SPECTRUM = List.of(ChatColor.WHITE, ChatColor.WHITE, ChatColor.YELLOW, ChatColor.GOLD, ChatColor.RED, ChatColor.RED);
         String s = "<" + damage + ">";
 
@@ -41,5 +46,9 @@ public class Utils {
         }
 
         return builder.toString();
+    }
+
+    public static String color(String msg) {
+        return org.bukkit.ChatColor.translateAlternateColorCodes('&', msg);
     }
 }
