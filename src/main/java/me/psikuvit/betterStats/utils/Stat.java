@@ -4,8 +4,8 @@ import me.psikuvit.betterStats.BetterStats;
 import org.bukkit.NamespacedKey;
 
 public enum Stat {
-    MAX_HEALTH("max_hp"),
-    HEALTH("hp"),
+    MAX_HEALTH("hp"),
+    CURRENT_HP("current_hp"),
     STRENGTH("strength"),
     INTELLECT("intellect"),
     MANA("mana"),

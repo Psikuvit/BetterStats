@@ -14,7 +14,7 @@ public class JoinListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        if (player.getPersistentDataContainer().has(Stat.HEALTH.getKey())) return;
+        if (player.getPersistentDataContainer().has(Stat.CURRENT_HP.getKey())) return;
         PlayerStats playerStats = new PlayerStats(player);
         playerStats.initialiseStats();
 

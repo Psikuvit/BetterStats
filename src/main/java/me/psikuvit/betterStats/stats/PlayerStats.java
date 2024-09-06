@@ -17,7 +17,7 @@ public record PlayerStats(Player player) {
      */
     public void initialiseStats() {
         player.getPersistentDataContainer().set(Stat.MAX_HEALTH.getKey(), PersistentDataType.DOUBLE, 20D);
-        player.getPersistentDataContainer().set(Stat.HEALTH.getKey(), PersistentDataType.DOUBLE, 20D);
+        player.getPersistentDataContainer().set(Stat.CURRENT_HP.getKey(), PersistentDataType.DOUBLE, 20D);
         player.getPersistentDataContainer().set(Stat.STRENGTH.getKey(), PersistentDataType.DOUBLE, 10D);
         player.getPersistentDataContainer().set(Stat.INTELLECT.getKey(), PersistentDataType.DOUBLE, 100D);
         player.getPersistentDataContainer().set(Stat.MANA.getKey(), PersistentDataType.DOUBLE, 100D);

@@ -23,13 +23,13 @@ public class Utils {
         randomY += 0.25D;
         randomZ -= 0.5D;
         ArmorStand armorStand = loc.getWorld().spawn(loc.clone().add(randomX, randomY, randomZ), ArmorStand.class, as -> {
-        as.setCustomName(color((int) damage));
-        as.setCustomNameVisible(true);
-        as.setInvulnerable(true);
-        as.setInvisible(true);
-        as.setBasePlate(false);
-        as.setGravity(false);
-    });
+            as.setCustomName(color((int) damage));
+            as.setCustomNameVisible(true);
+            as.setInvulnerable(true);
+            as.setInvisible(true);
+            as.setBasePlate(false);
+            as.setGravity(false);
+        });
 
         Bukkit.getScheduler().runTaskLater(BetterStats.getPlugin(BetterStats.class), armorStand::remove, 20);
     }

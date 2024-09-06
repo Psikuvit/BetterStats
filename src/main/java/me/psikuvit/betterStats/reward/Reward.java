@@ -5,22 +5,30 @@ import me.psikuvit.betterStats.utils.Stat;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Reward {
 
     private final ItemStack itemStack;
+    private final Random rnd = new Random();
 
     public Reward(int level) {
-        Material material = getArmorMaterials().get(new Random().nextInt(getArmorMaterials().size()));
+        Rarity rarity = Rarity.values()[rnd.nextInt(Rarity.values().length)];
+
+        List<Material> mats = classifyArmorByRarity(rarity);
+        Material material = mats.get(rnd.nextInt(mats.size()));
+
         itemStack = new ItemStack(material);
         ItemStats itemStats = new ItemStats(itemStack);
 
-        Rarity rarity = Rarity.values()[new Random().nextInt(Rarity.values().length)];
+        Set<Stat> appliedStats = new HashSet<>(); // To store applied stats
 
         for (int i = 0; rarity.getStats() >= i; i++) {
-            itemStats.setValue(getSelectedStat(), randomStatAmount(rarity, level));
+            Stat rndStat = randomStat(appliedStats); // Ensure no duplicates
+            double rndAmount = randomStatAmount(rarity, level);
+
+            itemStats.setValue(rndStat, rndAmount);
+            appliedStats.add(rndStat); // Add stat to the set after applying it
         }
         itemStats.setRarity(rarity);
     }
@@ -29,12 +37,15 @@ public class Reward {
         return itemStack;
     }
 
-    public Stat getSelectedStat() {
-        return Stat.values()[(new Random().nextInt(Stat.values().length))];
+    public Stat randomStat(Set<Stat> appliedStats) {
+        Stat stat;
+        do {
+            stat = Stat.values()[rnd.nextInt(Stat.values().length)];
+        } while (stat == Stat.CURRENT_HP || appliedStats.contains(stat)); // Avoid duplicates and CURRENT_HP
+        return stat;
     }
 
     public double randomStatAmount(Rarity rarity, int level) {
-        Random random = new Random();
         int min = 0;
         int max = 0;
         if (rarity == Rarity.RARE) {
@@ -51,42 +62,38 @@ public class Reward {
             max = ConfigUtils.getEpicTitanforgedLevel(level)[1];
         }
 
-        return random.nextInt((int) (max - min + 1)) + min;
+        return rnd.nextInt(max - min + 1) + min;
     }
 
-    public List<Material> getArmorMaterials() {
-        return List.of(
-                Material.LEATHER_HELMET,
-                Material.LEATHER_CHESTPLATE,
-                Material.LEATHER_LEGGINGS,
-                Material.LEATHER_BOOTS,
+    public List<Material> classifyArmorByRarity(Rarity rarity) {
+        List<Material> armorList = new ArrayList<>();
 
-                Material.CHAINMAIL_HELMET,
-                Material.CHAINMAIL_CHESTPLATE,
-                Material.CHAINMAIL_LEGGINGS,
-                Material.CHAINMAIL_BOOTS,
+        switch (rarity) {
+            case RARE:
+                armorList.add(Material.IRON_HELMET);
+                armorList.add(Material.IRON_CHESTPLATE);
+                armorList.add(Material.IRON_LEGGINGS);
+                armorList.add(Material.IRON_BOOTS);
+                break;
 
-                Material.IRON_HELMET,
-                Material.IRON_CHESTPLATE,
-                Material.IRON_LEGGINGS,
-                Material.IRON_BOOTS,
+            case EPIC:
+                armorList.add(Material.DIAMOND_HELMET);
+                armorList.add(Material.DIAMOND_CHESTPLATE);
+                armorList.add(Material.DIAMOND_LEGGINGS);
+                armorList.add(Material.DIAMOND_BOOTS);
+                break;
 
-                Material.GOLDEN_HELMET,
-                Material.GOLDEN_CHESTPLATE,
-                Material.GOLDEN_LEGGINGS,
-                Material.GOLDEN_BOOTS,
+            case EpicWarforged, EpicTitanforged:
+                armorList.add(Material.NETHERITE_HELMET);
+                armorList.add(Material.NETHERITE_CHESTPLATE);
+                armorList.add(Material.NETHERITE_LEGGINGS);
+                armorList.add(Material.NETHERITE_BOOTS);
+                break;
 
-                Material.DIAMOND_HELMET,
-                Material.DIAMOND_CHESTPLATE,
-                Material.DIAMOND_LEGGINGS,
-                Material.DIAMOND_BOOTS,
+            default:
+                break;
+        }
 
-                Material.NETHERITE_HELMET,
-                Material.NETHERITE_CHESTPLATE,
-                Material.NETHERITE_LEGGINGS,
-                Material.NETHERITE_BOOTS,
-
-                Material.TURTLE_HELMET
-        );
+        return armorList;
     }
 }

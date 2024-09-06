@@ -10,7 +10,6 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 public class ItemStats {
@@ -31,7 +30,7 @@ public class ItemStats {
 
     public void setValue(Stat stat, double value) {
         List<String> lore = Optional.ofNullable(itemMeta.getLore()).orElseGet(ArrayList::new);
-        lore.add(Utils.color("&7" + stat.getKey().getKey() + " &b" + value));
+        lore.add(Utils.color("&7" + stat.getKey().getKey() + " &b" + ((int) value)));
 
         itemMeta.setLore(lore);
         pdc.set(stat.getKey(), PersistentDataType.DOUBLE, value);
@@ -41,7 +40,7 @@ public class ItemStats {
     public void setRarity(Rarity rarity) {
         List<String> lore = Optional.ofNullable(itemMeta.getLore()).orElseGet(ArrayList::new);
         lore.add(" ");
-        lore.add(Utils.color("&7" + rarity));
+        lore.add(rarity.getName());
 
         itemMeta.setLore(lore);
         itemStack.setItemMeta(itemMeta);
