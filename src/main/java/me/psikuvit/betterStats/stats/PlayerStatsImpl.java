@@ -1,5 +1,8 @@
 package me.psikuvit.betterStats.stats;
 
+import me.psikuvit.betterStats.api.ItemStats;
+import me.psikuvit.betterStats.api.PlayerStats;
+import me.psikuvit.betterStats.api.StatsAPI;
 import me.psikuvit.betterStats.utils.Stat;
 import me.psikuvit.betterStats.utils.Utils;
 import org.bukkit.attribute.Attribute;
@@ -9,12 +12,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
-public record PlayerStats(Player player) {
+public record PlayerStatsImpl(Player player) implements PlayerStats {
+
+    public PlayerStatsImpl {
+        if (player == null) {
+            throw new IllegalArgumentException("Player cannot be null.");
+        }
+    }
 
     /**
      * Initializes the player's stats by setting default values for each stat.
      * This method should be called when a player first joins or resets their stats.
      */
+    @Override
     public void initialiseStats() {
         player.getPersistentDataContainer().set(Stat.MAX_HEALTH.getKey(), PersistentDataType.DOUBLE, 20D);
         player.getPersistentDataContainer().set(Stat.CURRENT_HP.getKey(), PersistentDataType.DOUBLE, 20D);
@@ -33,6 +43,7 @@ public record PlayerStats(Player player) {
      * @param stat The stat to retrieve the value for.
      * @return The value of the specified stat, or 0 if the stat is not set.
      */
+    @Override
     public double getValue(Stat stat) {
         return player.getPersistentDataContainer().getOrDefault(stat.getKey(), PersistentDataType.DOUBLE, 0D);
     }
@@ -43,6 +54,7 @@ public record PlayerStats(Player player) {
      * @param stat The stat to set the value for.
      * @param value The value to set for the specified stat.
      */
+    @Override
     public void setValue(Stat stat, double value) {
         if (stat == Stat.HASTE) {
             player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(value);
@@ -57,6 +69,7 @@ public record PlayerStats(Player player) {
      * @param incomeDamage The initial incoming damage before defense is applied.
      * @return The reduced damage after applying the player's defense stat.
      */
+    @Override
     public double getDefenseReduction(double incomeDamage) {
         double defense = getValue(Stat.DEFENSE);
 
@@ -80,22 +93,24 @@ public record PlayerStats(Player player) {
      * @param stat The {@link Stat} representing the specific stat to calculate the total for.
      * @return The total value of the specified stat across all the player's equipped armor.
      */
+    @Override
     public double getArmorStats(Stat stat) {
         double sum = 0;
         for (ItemStack itemStack : player.getInventory().getArmorContents()) {
             if (itemStack == null || itemStack.getItemMeta() == null) continue;
-            ItemStats itemStat = new ItemStats(itemStack);
+            ItemStats itemStats = StatsAPI.getItemStats(itemStack);
 
-            sum += itemStat.getValue(stat);
+            sum += itemStats.getValue(stat);
         }
         return sum;
     }
 
+    @Override
     public double getHeldStats(Stat stat) {
         ItemStack itemStack = player.getInventory().getItemInMainHand();
         if (itemStack.getItemMeta() == null) return 0;
 
-        ItemStats itemStats = new ItemStats(itemStack);
+        ItemStats itemStats = StatsAPI.getItemStats(itemStack);
         return itemStats.getValue(stat);
     }
 
@@ -104,6 +119,7 @@ public record PlayerStats(Player player) {
      *
      * @return The calculated damage based on the player's intellect and mana.
      */
+    @Override
     public double getManaDamage() {
         double currentMana = getValue(Stat.INTELLECT);
         return 1 + (currentMana / 50);
@@ -124,6 +140,7 @@ public record PlayerStats(Player player) {
      *                 from the caster’s current mana. If the caster does not have enough mana,
      *                 the spell will not be cast, and no damage will be applied.
      */
+    @Override
     public void applyMagicDamage(Entity castedOn, double manaCost) {
         double currentMana = getValue(Stat.MANA);
         if (currentMana < manaCost) {

@@ -1,7 +1,8 @@
 package me.psikuvit.betterStats.listeners;
 
 import me.psikuvit.betterStats.TestGUI;
-import me.psikuvit.betterStats.stats.PlayerStats;
+import me.psikuvit.betterStats.api.PlayerStats;
+import me.psikuvit.betterStats.api.StatsAPI;
 import me.psikuvit.betterStats.utils.Stat;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,7 +16,7 @@ public class JoinListener implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         if (player.getPersistentDataContainer().has(Stat.CURRENT_HP.getKey())) return;
-        PlayerStats playerStats = new PlayerStats(player);
+        PlayerStats playerStats = StatsAPI.getPlayerStats(player);
         playerStats.initialiseStats();
 
     }

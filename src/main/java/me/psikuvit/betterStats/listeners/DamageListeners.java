@@ -1,7 +1,8 @@
 package me.psikuvit.betterStats.listeners;
 
-import me.psikuvit.betterStats.stats.ItemStats;
-import me.psikuvit.betterStats.stats.PlayerStats;
+import me.psikuvit.betterStats.api.PlayerStats;
+import me.psikuvit.betterStats.api.StatsAPI;
+import me.psikuvit.betterStats.stats.PlayerStatsImpl;
 import me.psikuvit.betterStats.utils.Stat;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -15,7 +16,7 @@ public class DamageListeners implements Listener {
     @EventHandler
     public void onDamage(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player player) {
-            PlayerStats playerStats = new PlayerStats(player);
+            PlayerStats playerStats = StatsAPI.getPlayerStats(player);
 
             double playerStrength = playerStats.getValue(Stat.STRENGTH) + playerStats.getArmorStats(Stat.STRENGTH);
             double itemStrength = playerStats.getHeldStats(Stat.STRENGTH);

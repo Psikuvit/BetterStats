@@ -1,26 +1,34 @@
 package me.psikuvit.betterStats.reward;
 
-import me.psikuvit.betterStats.stats.ItemStats;
+import com.google.common.math.Stats;
+import me.psikuvit.betterStats.api.ItemStats;
+import me.psikuvit.betterStats.api.Reward;
+import me.psikuvit.betterStats.api.StatsAPI;
+import me.psikuvit.betterStats.stats.ItemStatsImpl;
 import me.psikuvit.betterStats.utils.ConfigUtils;
 import me.psikuvit.betterStats.utils.Stat;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
-public class Reward {
 
-    private final ItemStack itemStack;
-    private final Random rnd = new Random();
+public class RewardImpl implements Reward {
 
-    public Reward(int level) {
+    private static final Random rnd = new Random();
+
+    public ItemStack getItemStack(int level) {
         Rarity rarity = Rarity.values()[rnd.nextInt(Rarity.values().length)];
 
         List<Material> mats = classifyArmorByRarity(rarity);
         Material material = mats.get(rnd.nextInt(mats.size()));
 
-        itemStack = new ItemStack(material);
-        ItemStats itemStats = new ItemStats(itemStack);
+        ItemStack itemStack = new ItemStack(material);
+        ItemStats itemStats = StatsAPI.getItemStats(itemStack);
 
         Set<Stat> appliedStats = new HashSet<>(); // To store applied stats
 
@@ -32,13 +40,10 @@ public class Reward {
             appliedStats.add(rndStat); // Add stat to the set after applying it
         }
         itemStats.setRarity(rarity);
-    }
-
-    public ItemStack getItemStack() {
         return itemStack;
     }
 
-    public Stat randomStat(Set<Stat> appliedStats) {
+    private Stat randomStat(Set<Stat> appliedStats) {
         Stat stat;
         do {
             stat = Stat.values()[rnd.nextInt(Stat.values().length)];
@@ -46,7 +51,7 @@ public class Reward {
         return stat;
     }
 
-    public double randomStatAmount(Rarity rarity, int level) {
+    private double randomStatAmount(Rarity rarity, int level) {
         int min = 0;
         int max = 0;
         if (rarity == Rarity.RARE) {
@@ -66,7 +71,7 @@ public class Reward {
         return rnd.nextInt(max - min + 1) + min;
     }
 
-    public List<Material> classifyArmorByRarity(Rarity rarity) {
+    private List<Material> classifyArmorByRarity(Rarity rarity) {
         List<Material> armorList = new ArrayList<>();
 
         switch (rarity) {

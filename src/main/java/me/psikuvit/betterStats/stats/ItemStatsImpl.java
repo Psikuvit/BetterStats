@@ -1,5 +1,6 @@
 package me.psikuvit.betterStats.stats;
 
+import me.psikuvit.betterStats.api.ItemStats;
 import me.psikuvit.betterStats.reward.Rarity;
 import me.psikuvit.betterStats.utils.Stat;
 import me.psikuvit.betterStats.utils.Utils;
@@ -12,23 +13,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ItemStats {
+public record ItemStatsImpl(ItemStack itemStack) implements ItemStats {
 
-    private final ItemStack itemStack;
-    private final ItemMeta itemMeta;
-    private final PersistentDataContainer pdc;
-
-    public ItemStats(ItemStack itemStack) {
-        this.itemStack = itemStack;
-        this.itemMeta = itemStack.getItemMeta();
-        this.pdc = itemMeta.getPersistentDataContainer();
+    public ItemStatsImpl {
+        if (itemStack == null || itemStack.getItemMeta() == null) {
+            throw new IllegalArgumentException("ItemStack or ItemMeta cannot be null.");
+        }
     }
 
+    @Override
     public double getValue(Stat stat) {
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        PersistentDataContainer pdc = itemMeta.getPersistentDataContainer();
         return pdc.getOrDefault(stat.getKey(), PersistentDataType.DOUBLE, 0D);
     }
 
+    @Override
     public void setValue(Stat stat, double value) {
+        ItemMeta itemMeta = itemStack.getItemMeta();
+        PersistentDataContainer pdc = itemMeta.getPersistentDataContainer();
+
         List<String> lore = Optional.ofNullable(itemMeta.getLore()).orElseGet(ArrayList::new);
         lore.add(Utils.color("&7" + stat.getKey().getKey() + " &b" + ((int) value)));
 
@@ -37,7 +41,9 @@ public class ItemStats {
         itemStack.setItemMeta(itemMeta);
     }
 
+    @Override
     public void setRarity(Rarity rarity) {
+        ItemMeta itemMeta = itemStack.getItemMeta();
         List<String> lore = Optional.ofNullable(itemMeta.getLore()).orElseGet(ArrayList::new);
         lore.add(" ");
         lore.add(rarity.getName());
@@ -45,5 +51,4 @@ public class ItemStats {
         itemMeta.setLore(lore);
         itemStack.setItemMeta(itemMeta);
     }
-
 }

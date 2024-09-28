@@ -1,7 +1,6 @@
 package me.psikuvit.betterStats;
 
-import me.psikuvit.betterStats.stats.ItemStats;
-import me.psikuvit.betterStats.stats.PlayerStats;
+import me.psikuvit.betterStats.stats.PlayerStatsImpl;
 import me.psikuvit.betterStats.utils.Stat;
 import me.psikuvit.betterStats.utils.Utils;
 import org.bukkit.Bukkit;
@@ -18,11 +17,11 @@ import java.util.List;
 public class TestGUI implements InventoryHolder {
 
     private final Inventory inventory;
-    private final PlayerStats playerStats;
+    private final PlayerStatsImpl playerStats;
 
     public TestGUI(Player player) {
         this.inventory = Bukkit.createInventory(this, 36, "test");
-        this.playerStats = new PlayerStats(player);
+        this.playerStats = new PlayerStatsImpl(player);
 
         for (int i = 0; inventory.getSize() > i; i++) inventory.setItem(i, new ItemStack(Material.GRAY_STAINED_GLASS_PANE));
 

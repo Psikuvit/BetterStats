@@ -1,9 +1,10 @@
 package me.psikuvit.betterStats.listeners;
 
 import me.psikuvit.betterStats.BetterStats;
+import me.psikuvit.betterStats.api.PlayerStats;
+import me.psikuvit.betterStats.api.StatsAPI;
 import me.psikuvit.betterStats.armor.ArmorEquipEvent;
-import me.psikuvit.betterStats.stats.PlayerStats;
-import me.psikuvit.betterStats.utils.Utils;
+import me.psikuvit.betterStats.stats.PlayerStatsImpl;
 import me.psikuvit.betterStats.utils.Stat;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -20,7 +21,7 @@ public class HealthListener implements Listener {
     @EventHandler
     public void onPlayerDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player player) {
-            PlayerStats playerStats = new PlayerStats(player);
+            PlayerStats playerStats = StatsAPI.getPlayerStats(player);
 
             double reducedDamage = playerStats.getDefenseReduction(event.getDamage());
             double healthAfterDamage = (playerStats.getValue(Stat.CURRENT_HP) + playerStats.getArmorStats(Stat.CURRENT_HP)) - reducedDamage; // amount of remaining Health after defense application
@@ -40,7 +41,7 @@ public class HealthListener implements Listener {
     @EventHandler
     public void onPlayerRegainHealth(EntityRegainHealthEvent event) {
         if (event.getEntity() instanceof Player player) {
-            PlayerStats playerStats = new PlayerStats(player);
+            PlayerStats playerStats = StatsAPI.getPlayerStats(player);
             event.setCancelled(true);
 
             double newHealth = playerStats.getValue(Stat.CURRENT_HP) + event.getAmount(); // new regenerated health
@@ -51,19 +52,19 @@ public class HealthListener implements Listener {
     @EventHandler
     public void onRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
-        PlayerStats playerStats = new PlayerStats(player);
+        PlayerStats playerStats = StatsAPI.getPlayerStats(player);
         setHealth(playerStats.getValue(Stat.MAX_HEALTH), player); // setting health to max on respawn
     }
 
     @EventHandler
     public void onEquip(ArmorEquipEvent event) {
         Bukkit.getScheduler().runTask(BetterStats.getPlugin(BetterStats.class), () ->
-                setHealth(new PlayerStats(event.getPlayer()).getValue(Stat.CURRENT_HP), event.getPlayer()));
+                setHealth(new PlayerStatsImpl(event.getPlayer()).getValue(Stat.CURRENT_HP), event.getPlayer()));
     }
 
 
     public void setHealth(double health, Player player) {
-        PlayerStats playerStats = new PlayerStats(player);
+        PlayerStats playerStats = StatsAPI.getPlayerStats(player);
 
         double maxHealth = playerStats.getValue(Stat.MAX_HEALTH) + playerStats.getArmorStats(Stat.MAX_HEALTH);
         double currentHealth = playerStats.getValue(Stat.CURRENT_HP);

@@ -1,13 +1,12 @@
 package me.psikuvit.betterStats;
 
+import me.psikuvit.betterStats.api.PlayerStats;
+import me.psikuvit.betterStats.api.StatsAPI;
 import me.psikuvit.betterStats.armor.ArmorListener;
 import me.psikuvit.betterStats.listeners.DamageListeners;
 import me.psikuvit.betterStats.listeners.HealthListener;
 import me.psikuvit.betterStats.listeners.JoinListener;
 import me.psikuvit.betterStats.utils.ConfigUtils;
-import me.psikuvit.betterStats.reward.Reward;
-import me.psikuvit.betterStats.stats.ItemStats;
-import me.psikuvit.betterStats.stats.PlayerStats;
 import me.psikuvit.betterStats.utils.Stat;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -46,7 +45,7 @@ public final class BetterStats extends JavaPlugin {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (!(sender instanceof Player player)) return true;
-        PlayerStats playerStats = new PlayerStats(player);
+        PlayerStats playerStats = StatsAPI.getPlayerStats(player);
 
         if (args.length == 1) {
             if (args[0].equalsIgnoreCase("test")) {
@@ -57,7 +56,7 @@ public final class BetterStats extends JavaPlugin {
         } else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("reward")) {
                 int level = Integer.parseInt(args[1]);
-                player.getInventory().addItem(new Reward(level).getItemStack());
+                player.getInventory().addItem(StatsAPI.getReward().getItemStack(level));
             }
         } else if (args.length == 3) {
             if (args[0].equalsIgnoreCase("set")) {
@@ -85,7 +84,7 @@ public final class BetterStats extends JavaPlugin {
                     return true;
                 }
 
-                new ItemStats(itemStack).setValue(stat, amount);
+                StatsAPI.getItemStats(itemStack).setValue(stat, amount);
             }
         }
         return true;
