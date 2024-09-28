@@ -1,4 +1,4 @@
-package me.psikuvit.betterStats.reward;
+package me.psikuvit.betterStats.utils;
 
 import me.psikuvit.betterStats.BetterStats;
 import org.bukkit.configuration.file.FileConfiguration;

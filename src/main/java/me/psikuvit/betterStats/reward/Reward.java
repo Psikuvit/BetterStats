@@ -1,6 +1,7 @@
 package me.psikuvit.betterStats.reward;
 
 import me.psikuvit.betterStats.stats.ItemStats;
+import me.psikuvit.betterStats.utils.ConfigUtils;
 import me.psikuvit.betterStats.utils.Stat;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;

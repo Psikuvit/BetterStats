@@ -4,7 +4,7 @@ import me.psikuvit.betterStats.armor.ArmorListener;
 import me.psikuvit.betterStats.listeners.DamageListeners;
 import me.psikuvit.betterStats.listeners.HealthListener;
 import me.psikuvit.betterStats.listeners.JoinListener;
-import me.psikuvit.betterStats.reward.ConfigUtils;
+import me.psikuvit.betterStats.utils.ConfigUtils;
 import me.psikuvit.betterStats.reward.Reward;
 import me.psikuvit.betterStats.stats.ItemStats;
 import me.psikuvit.betterStats.stats.PlayerStats;
