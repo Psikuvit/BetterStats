@@ -32,11 +32,8 @@ public class HealthListener implements Listener {
                 return;
             }
             setHealth(healthAfterDamage, player);
-            Utils.setDamageIndicator(player.getLocation(), reducedDamage);
 
             event.setDamage(0.00001);
-        } else {
-            Utils.setDamageIndicator(event.getEntity().getLocation(), event.getDamage());
         }
     }
 
